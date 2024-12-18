@@ -20,8 +20,15 @@ class AgenteReativoModelo implements Agente {
             pecas[i] = pecas[i].replace("<", "").replace(">", "");
         }
 
-        char ladoEsquerdo = mesa.charAt(1);
-        char ladoDireito = mesa.charAt(mesa.length() - 2);
+        String[] mesaPecas = mesa.substring(1, mesa.length() - 1).split(", ");
+        String primeiraPeca = mesaPecas[0].replace("<", "").replace(">", "");
+        String ultimaPeca = mesaPecas[mesaPecas.length - 1].replace("<", "").replace(">", "");
+
+        char ladoEsquerdo = primeiraPeca.charAt(0);
+        char ladoDireito = ultimaPeca.charAt(2);
+
+        int melhorIndice = -1;
+        int maiorPrioridade = Integer.MIN_VALUE;
 
         for (int i = 0; i < pecas.length; i++) {
             String peca = pecas[i];
@@ -29,11 +36,15 @@ class AgenteReativoModelo implements Agente {
             char lado2 = peca.charAt(2);
 
             if (lado1 == ladoEsquerdo || lado2 == ladoEsquerdo || lado1 == ladoDireito || lado2 == ladoDireito) {
-                return i;
+                int prioridade = calcularPrioridade(lado1, lado2);
+                if (prioridade > maiorPrioridade) {
+                    maiorPrioridade = prioridade;
+                    melhorIndice = i;
+                }
             }
         }
 
-        return -1;
+        return melhorIndice;
     }
 
     private void atualizarContagemPecas(String mesa) {
@@ -48,5 +59,9 @@ class AgenteReativoModelo implements Agente {
             contagemPecas.put(Character.getNumericValue(lado2),
                     contagemPecas.get(Character.getNumericValue(lado2)) + 1);
         }
+    }
+
+    private int calcularPrioridade(char lado1, char lado2) {
+        return contagemPecas.get(Character.getNumericValue(lado1)) + contagemPecas.get(Character.getNumericValue(lado2));
     }
 }
