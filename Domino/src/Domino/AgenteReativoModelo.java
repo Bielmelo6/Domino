@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class AgenteReativoModelo implements Agente {
-    private Map<Integer, Integer> contagemPecas; // Histórico simplificado de peças
+    private Map<Integer, Integer> contagemPecas;
 
     public AgenteReativoModelo() {
         contagemPecas = new HashMap<>();
@@ -15,16 +15,21 @@ class AgenteReativoModelo implements Agente {
     public int indicePecaParaJogar(String mesa, String mao) {
         atualizarContagemPecas(mesa);
 
-        String[] pecas = mao.split("<");
-        char ladoEsquerdo = mesa.charAt(2);
-        char ladoDireito = mesa.charAt(mesa.length() - 3);
+        String[] pecas = mao.split(", ");
+        for (int i = 0; i < pecas.length; i++) {
+            pecas[i] = pecas[i].replace("<", "").replace(">", "");
+        }
 
-        for (int i = 1; i < pecas.length; i++) {
-            char lado1 = pecas[i].charAt(0);
-            char lado2 = pecas[i].charAt(2);
+        char ladoEsquerdo = mesa.charAt(1);
+        char ladoDireito = mesa.charAt(mesa.length() - 2);
+
+        for (int i = 0; i < pecas.length; i++) {
+            String peca = pecas[i];
+            char lado1 = peca.charAt(0);
+            char lado2 = peca.charAt(2);
 
             if (lado1 == ladoEsquerdo || lado2 == ladoEsquerdo || lado1 == ladoDireito || lado2 == ladoDireito) {
-                return i - 1;
+                return i;
             }
         }
 
@@ -32,10 +37,11 @@ class AgenteReativoModelo implements Agente {
     }
 
     private void atualizarContagemPecas(String mesa) {
-        String[] pecasMesa = mesa.split("<");
-        for (int i = 1; i < pecasMesa.length; i++) {
-            char lado1 = pecasMesa[i].charAt(0);
-            char lado2 = pecasMesa[i].charAt(2);
+        String[] pecasMesa = mesa.substring(1, mesa.length() - 1).split(", ");
+        for (String peca : pecasMesa) {
+            peca = peca.replace("<", "").replace(">", "");
+            char lado1 = peca.charAt(0);
+            char lado2 = peca.charAt(2);
 
             contagemPecas.put(Character.getNumericValue(lado1),
                     contagemPecas.get(Character.getNumericValue(lado1)) + 1);
