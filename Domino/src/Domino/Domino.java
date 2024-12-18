@@ -84,7 +84,7 @@ public class Domino {
                 }
                 mesa.add(pecaEscolhida); // Adiciona no final da mesa
             } else {
-                System.out.println("Peça inválida! Perdeu a vez.");
+                System.out.println("Peça inválida do " + jogadorAtual.nome +" ! Perdeu a vez.");
                 jogadorAtual.comprarPeca(pecaEscolhida); // Devolve a peça se não puder jogar
                 jogadasInvalidas++;
             }
@@ -93,16 +93,16 @@ public class Domino {
         }
 
         if (jogador1.mao.isEmpty()) {
-            System.out.println("Parabéns " + jogador1.nome + ", você venceu!");
+            System.out.println("Parabéns " + jogador1.nome + ", você bateu!");
             return 1;
         } else if (jogador2.mao.isEmpty()) {
-            System.out.println("Parabéns " + jogador2.nome + ", você venceu!");
+            System.out.println("Parabéns " + jogador2.nome + ", você bateu!");
             return 2;
         } else if (jogador1.pontos() < jogador2.pontos()) {
-            System.out.println("Parabéns " + jogador1.nome + ", você venceu!");
+            System.out.println("Parabéns " + jogador1.nome + ", você venceu por pontos!");
             return 1;
         } else if (jogador1.pontos() > jogador2.pontos()) {
-            System.out.println("Parabéns " + jogador2.nome + ", você venceu!");
+            System.out.println("Parabéns " + jogador2.nome + ", você venceu por pontos!");
             return 2;
         }
         System.out.println("O jogo terminou empatado.");

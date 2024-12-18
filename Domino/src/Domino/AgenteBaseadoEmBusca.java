@@ -1,29 +1,67 @@
 package Domino;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class AgenteBaseadoEmBusca implements Agente {
 
     @Override
     public int indicePecaParaJogar(String mesa, String mao) {
-        // Extrai os números extremos da mesa
-        char ladoEsquerdo = mesa.charAt(2); // Lado esquerdo
-        char ladoDireito = mesa.charAt(mesa.length() - 3); // Lado direito
+        String[] pecas = mao.split(", ");
+        for (int i = 0; i < pecas.length; i++) {
+            pecas[i] = pecas[i].replace("<", "").replace(">", "");
+        }
 
-        // Divide as peças da mão
-        String[] pecas = mao.split("<");
+        if (!mesa.startsWith("[") || !mesa.endsWith("]")) {
+            return -1;
+        }
+        String[] mesaPecas = mesa.substring(1, mesa.length() - 1).split(", ");
+        String primeiraPeca = mesaPecas[0].replace("<", "").replace(">", "");
+        String ultimaPeca = mesaPecas[mesaPecas.length - 1].replace("<", "").replace(">", "");
 
-        // Itera sobre as peças na mão para encontrar um encaixe
-        for (int i = 1; i < pecas.length; i++) {
-            char lado1 = pecas[i].charAt(0);
-            char lado2 = pecas[i].charAt(2);
+        char ladoEsquerdo = primeiraPeca.charAt(0);
+        char ladoDireito = ultimaPeca.charAt(2);
 
-            // Verifica se a peça encaixa em qualquer lado da mesa
-            if (lado1 == ladoEsquerdo || lado2 == ladoEsquerdo ||
-                    lado1 == ladoDireito || lado2 == ladoDireito) {
-                return i - 1; // Retorna o índice da peça válida
+        List<Integer> jogadasValidas = new ArrayList<>();
+
+        for (int i = 0; i < pecas.length; i++) {
+            String peca = pecas[i];
+            char lado1 = peca.charAt(0);
+            char lado2 = peca.charAt(2);
+
+            if (lado1 == ladoEsquerdo || lado2 == ladoEsquerdo || lado1 == ladoDireito || lado2 == ladoDireito) {
+                jogadasValidas.add(i);
             }
         }
 
-        // Retorna índice inválido se nenhuma peça for jogável
+        if (!jogadasValidas.isEmpty()) {
+            return escolherMelhorJogada(jogadasValidas, pecas);
+        }
+
         return -1;
+    }
+
+    private int escolherMelhorJogada(List<Integer> jogadasValidas, String[] pecas) {
+        int melhorIndice = jogadasValidas.get(0);
+        int maiorValor = Integer.MIN_VALUE;
+
+        for (int indice : jogadasValidas) {
+            String peca = pecas[indice];
+            int valor = calcularValorPeca(peca);
+
+            if (valor > maiorValor) {
+                maiorValor = valor;
+                melhorIndice = indice;
+            }
+        }
+
+        return melhorIndice;
+    }
+
+    private int calcularValorPeca(String peca) {
+        char lado1 = peca.charAt(0);
+        char lado2 = peca.charAt(2);
+
+        return Character.getNumericValue(lado1) + Character.getNumericValue(lado2);
     }
 }
